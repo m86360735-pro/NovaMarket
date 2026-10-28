@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🚀 NovaMarket — Полнофункциональный E-Commerce Маркетплейс для Demo Day
 
-## Getting Started
+Полноценный маркетплейс «под ключ» на **Next.js (App Router, Tailwind CSS v4, Lucide Icons)** с реальным бэкендом, постоянным хранилищем данных на диске, кабинетом продавца, живым каталогом, мгновенным списанием остатков и симуляцией выплат.
 
-First, run the development server:
+---
+
+## ⚡ Быстрый старт
+
+Проект уже настроен и запущен на локальном сервере:
 
 ```bash
+# Установка зависимостей (уже выполнено)
+npm run build
+
+# Запуск сервера разработки
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Откройте в браузере: **`http://localhost:3000`**
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔑 Готовые Демо-аккаунты для Жюри (1-клик вход)
 
-## Learn More
+На странице `/auth` и в шапке сайта предусмотрены **кнопки быстрого входа в 1 клик**:
 
-To learn more about Next.js, take a look at the following resources:
+| Роль | Email | Пароль | Описание |
+| :--- | :--- | :--- | :--- |
+| **Продавец (TechStore)** | `seller@demoday.ru` | `demo12345` | Стартовый баланс: **24 500 ₽**, 6 активных товаров, история продаж и выплат |
+| **Покупатель** | `buyer@demoday.ru` | `demo12345` | Готовый профиль покупателя с историей покупок |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎯 Сценарии для показа жюри на Demo Day
 
-## Deploy on Vercel
+### 1. Механика моментального выкупа и скрытия товара (Showstopper!)
+1. Откройте главную страницу (Витрина `http://localhost:3000`).
+2. Найдите товар **Sony PlayStation 5 Slim 1TB** — у него специальный бейдж **«🔥 Осталась 1 шт!»**.
+3. Нажмите кнопку **«Купить»**, подтвердите оформление в модальном окне.
+4. **Результат:** 
+   - Товар мгновенно исчезает с витрины (остаток стал 0).
+   - Выручка **+57 900 ₽** моментально зачисляется на кошелек продавца `TechStore Official`.
+   - Заказ записывается в историю со статусом **«Оплачен»**.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 2. Кабинет продавца и живой баланс
+1. Перейдите в **«Кабинет продавца»** (`http://localhost:3000/seller`).
+2. Наблюдайте обновленный баланс кошелька, счетчик выручки и таблицу проданных товаров.
+3. В табе **«История заказов»** виден только что оформленный заказ.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 3. Вывод средств (Payout Simulation)
+1. Нажмите кнопку **«Вывести средства»** в карточке баланса.
+2. Выберите процент (25%, 50% или 100%) или введите сумму вручную.
+3. Выберите метод получения: **СБП (Т-Банк)**, **Банковская карта (МИР)** или **Р/С ИП**.
+4. Нажмите **«Вывести»**: баланс мгновенно списывается, а в табе **«История выплат»** появляется подтвержденная транзакция со статусом **«Выполнено»**.
+
+### 4. Добавление товара с 1-тап пресетами Unsplash
+1. В кабинете продавца нажмите **«+ Добавить товар»**.
+2. Кликните по любому пресету сверху: **🎧 AirPods Max**, **🎮 PS5 Slim**, **🧥 Кожаная куртка**, **☕ Кофемашина**, **👟 Nike Jordan**, **🛴 Электросамокат**, **💻 MacBook Pro**, **⌚ Apple Watch Ultra**.
+3. Поля и качественное фото автоматически заполнятся за 1 секунду.
+4. Нажмите **«Опубликовать товар»** — лот сразу появится на витрине.
+
+### 5. Сброс демо-данных к стартовым (Удобно для повторных демонстраций!)
+- В шапке сайта есть кнопка **«Сброс данных»** (или API `POST /api/seed/reset`). 
+- Одно нажатие возвращает каталог, баланс и тестовые остатки в исходное идеальное состояние.
+
+---
+
+## 🛠 Архитектура и Структура проекта
+
+```text
+demodey1/
+├── app/
+│   ├── api/
+│   │   ├── auth/          # Авторизация (login, register, me, logout)
+│   │   ├── orders/buy/    # Мгновенная покупка, списание stock и начисление баланса
+│   │   ├── payouts/       # Вывод средств на карту/СБП
+│   │   ├── products/      # CRUD товаров и фильтрация stock > 0
+│   │   ├── seed/reset/    # Сброс базы к стартовым демо-данным
+│   │   └── seller/stats/  # Аналитика и показатели продавца
+│   ├── auth/              # Страница входа с VIP 1-клик демо-кнопками
+│   ├── seller/            # Кабинет продавца (товары, заказы, выплаты, баланс)
+│   ├── globals.css        # Tailwind CSS v4, темная нео-тема
+│   ├── layout.js          # Root layout с провайдерами Auth и Toast
+│   └── page.js            # Витрина маркетплейса с живым поиском и фильтрами
+├── components/
+│   ├── BuyModal.js        # Модальное окно покупки с калькулятором
+│   ├── Navbar.js          # Шапка с живым балансом и переключателями ролей
+│   ├── ProductModal.js    # Добавление/редактирование с 1-тап фото-пресетами
+│   ├── Providers.js       # Клиентские контексты
+│   ├── ToastContext.js    # Всплывающие уведомления
+│   └── WithdrawModal.js   # Модальное окно вывода средств на карту/СБП
+├── context/
+│   ├── AuthContext.js     # Управление сессией и балансом пользователя
+│   └── ToastContext.js    # Глобальные тосты
+├── data/
+│   └── db.json            # Постоянное хранилище на диске (не пропадает при перезапуске)
+├── lib/
+│   ├── auth.js            # HMAC-SHA256 токены сессий и Cookies
+│   └── db.js              # Атомарный движок базы данных и бизнес-логика
+└── scripts/
+    └── test-marketplace.mjs # Автоматизированный E2E тестовый комплекс
+```
+
+---
+
+## 💾 Постоянное хранение данных (Persistent Storage)
+
+Все данные (пользователи, балансы кошельков, товары, складские остатки, заказы и выплаты) сохраняются в файл `data/db.json` на диске с поддержкой атомарных транзакционных записей. 
+**Данные гарантированно не сбрасываются при перезапуске сервера `npm run dev`.**
